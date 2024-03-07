@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--    Change the navbar logo href to /shop-->
+    <template id="custom_option_header_brand_logo" name="Custom Brand Layout" inherit_id="website.option_header_brand_logo">
+        <xpath expr="//a" position="attributes">
+            <attribute name="href">/shop</attribute>
+        </xpath>
+    </template>
+
+    <template id="hide_my_account_from_user_dropdown" inherit_id="portal.user_dropdown">
+        <xpath expr="//a[@href='/my/home']" position="attributes">
+            <attribute name="hidden">1</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_logout_divider']" position="attributes">
+            <attribute name="class">""</attribute>
+        </xpath>
+    </template>
+
+<!--    Hide all button from the navbar-->
+    <template id="custom_header_layout" name="Custom Header Layout" inherit_id="website_sale.template_header_default">
+        <xpath expr="//div[@id='o_main_nav']" position="replace">
+            <div id="o_main_nav" class="container">
+                <!-- Brand -->
+                <t t-call="website.placeholder_header_brand">
+                    <t t-set="_link_class" t-valuef="me-4"/>
+                </t>
+                <!-- Extra elements -->
+                <ul class="navbar-nav align-items-center gap-2 flex-shrink-0 justify-content-end ps-3">
+                    <!-- Sign In -->
+                    <t t-call="portal.placeholder_user_sign_in">
+                        <t t-set="_link_class" t-valuef="btn btn-outline-secondary"/>
+                    </t>
+                    <!-- User Dropdown -->
+                    <t t-call="portal.user_dropdown">
+                        <t t-set="_user_name" t-value="True"/>
+                        <t t-set="_item_class" t-valuef="dropdown"/>
+                        <t t-set="_link_class" t-valuef="btn-outline-secondary border-0 fw-bold"/>
+                        <t t-set="_user_name_class" t-valuef="small"/>
+                        <t t-set="_dropdown_menu_class" t-valuef="dropdown-menu-end"/>
+                    </t>
+                </ul>
+            </div>
+        </xpath>
+    </template>
+</odoo>

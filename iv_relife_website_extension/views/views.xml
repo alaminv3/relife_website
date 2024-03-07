@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <!-- Inherit Res Partner Form View to Modify it -->
+        <record id="inherit_view_partner_form" model="ir.ui.view">
+            <field name="name">inherit_view_partner_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="floor"/>
+                    <field name="pricelist_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="second_phone"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Sale Order Form View to Modify it -->
+        <record id="inherit_view_sale_order_form" model="ir.ui.view">
+            <field name="name">inherit_view_sale_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_product_configurator.sale_order_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+                <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="optional">show</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Website product template Form View to Modify it -->
+        <record id="inherit_website_sale_product_template_form" model="ir.ui.view">
+            <field name="name">inherit_view_website_sale_product_common_form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="website_sale.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_published']" position="replace">
+                    <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe" invisible="not sale_ok">
+                        <field name="is_published" widget="website_publish_button"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

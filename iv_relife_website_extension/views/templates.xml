@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<!--    Inherit /shop template to modify it-->
+    <template id="inherit_website_sale_products" inherit_id="website_sale.products">
+        <xpath expr="//aside[@id='products_grid_before']" position="replace"/>
+
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="t-attf-class">"#{'o_wsale_layout_list' if layout_mode == 'list' else ''} col-12</attribute>
+        </xpath>
+        <xpath expr="//div[@id='products_grid']/div[hasclass('products_header')]" position="replace">
+            <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
+                <t t-if="is_view_active('website_sale.search')" t-call="website_sale.search">
+                    <t t-set="search" t-value="original_search or search"/>
+                    <t t-set="_form_classes" t-valuef="d-lg-inline {{'d-inline' if not category else 'd-none'}}"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+<!--    Inherit the product item template to modify the price-->
+    <template id="inherit_website_sale_products_items" inherit_id="website_sale.products_item">
+        <xpath expr="//div[hasclass('o_wsale_product_sub')]" position="replace"/>
+    </template>
+
+    <template id="order_dealer_form">
+        <t t-call="website.layout">
+            <style>
+                .oe_form_custom { width: 75%; margin:auto; }
+                input { background-color: #ebebeb !important; }
+            </style>
+
+            <div id="wrap" class="js_sale o_wsale_products_page">
+                <div class="container oe_website_sale pt-2">
+                    <br/><br/>
+                    <h2>Please fill out the form completely</h2>
+                    <p>Fields marked with an <span style="color: red;">*</span> are required</p>
+                    <br/>
+                    <form class="oe_form_custom" method="post" action="/submit_order">
+                        <t t-foreach="field_list" t-as="field">
+                            <div class="form-group p-3">
+                                <label class="fw-bold" t-att-for="field[0]"><t t-esc="field[2]"/> <span t-if="field[3] == True" style="color: red;">*</span></label>
+                                <t t-if="field[1] == 'string'">
+                                    <t t-if="field[3] == True">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="text" t-att-name="field[0]" class="form-control p-2" required="1"/>
+                                    </t>
+                                    <t t-else="">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="text" t-att-name="field[0]" class="form-control p-2"/>
+                                    </t>
+                                </t>
+                                <t t-elif="field[1] == 'date'">
+                                    <t t-if="field[3] == True">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="date" t-att-name="field[0]" class="form-control p-2" required="1"/>
+                                    </t>
+                                    <t t-else="">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="date" t-att-name="field[0]" class="form-control p-2"/>
+                                    </t>
+                                </t>
+                                <t t-elif="field[1] == 'number'">
+                                    <t t-if="field[3] == True">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="number" t-att-name="field[0]" class="form-control p-2" required="1"/>
+                                    </t>
+                                    <t t-else="">
+                                        <input t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" type="number" t-att-name="field[0]" class="form-control p-2"/>
+                                    </t>
+                                </t>
+                                <t t-elif="field[1] == 'text'">
+                                    <t t-if="field[3] == True">
+                                        <textarea t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" t-att-name="field[0]" class="form-control p-2" required="1"/>
+                                    </t>
+                                    <t t-else="">
+                                        <textarea t-att-value="field_values[field[0]] if field[0] in field_values.keys() else ''" t-att-name="field[0]" class="form-control p-2"/>
+                                    </t>
+                                </t>
+                                <t t-elif="field[1] == 'selection'">
+<!--                                    Special render for state because it is depended on country-->
+<!--                                    <t t-if="field[0] == 'state'">-->
+<!--                                        <select id="state" class="form-select form-select-lg md-3" aria-label="Selection" required="True" t-att-name="field[0]">-->
+<!--                                            <t t-if="field[0] in field_values.keys()">-->
+<!--                                                <t t-foreach="field_values[field[0]]" t-as="item">-->
+<!--                                                    <option t-att-value="item[0]" t-att-data-country_id="item[2]"><t t-esc="item[1]"/></option>-->
+<!--                                                </t>-->
+<!--                                            </t>-->
+<!--                                        </select>-->
+<!--                                    </t>-->
+                                    <t t-if="field[3] == True">
+                                        <select t-att-id="field[0]" class="form-select form-select-lg md-3" aria-label="Selection" required="True" t-att-name="field[0]">
+                                            <t t-if="field[0] in field_values.keys()">
+                                                <t t-foreach="field_values[field[0]]" t-as="item">
+                                                    <option t-att-value="item[0]"><t t-esc="item[1]"/></option>
+                                                </t>
+                                            </t>
+                                        </select>
+                                    </t>
+                                    <t t-else="">
+                                        <select t-att-id="field[0]" class="form-select form-select-lg md-3" aria-label="Selection" t-att-name="field[0]">
+                                            <t t-if="field[0] in field_values.keys()">
+                                                <t t-foreach="field_values[field[0]]" t-as="item">
+                                                    <option t-att-value="item[0]"><t t-esc="item[1]"/></option>
+                                                </t>
+                                            </t>
+                                        </select>
+                                    </t>
+                                </t>
+                                <!-- Add product input field as hidden as needed in controller -->
+                                <t t-if="field_last">
+                                    <input t-att-value="product.id" type="number" name="product_id" class="form-control p-2" hidden="1"/>
+                                </t>
+                            </div>
+                        </t>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <br/><br/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="dealer_confirmation">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <div class="text-center align-items-center">
+                    <h2>Thank you for your order.</h2>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
